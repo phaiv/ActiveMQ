@@ -21,7 +21,10 @@ public class ConnectionFactory {
 	@Value("${activeMqPw}")
 	private String pw;
 	@Value("${activeMqUrl}")
-	private String url;
+	private String url1;
+	
+	@Value("${activeMqUrl2}")
+	private String url2;
 	private Object LOCK_CONNECTION = new Object();
 	private boolean isConnectionOK = true;
 	private long retryTime;
@@ -52,13 +55,25 @@ public class ConnectionFactory {
 		this.pw = pw;
 	}
 
-	public String getUrl() {
-		return url;
+	 
+
+	public String getUrl1() {
+		return url1;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setUrl1(String url1) {
+		this.url1 = url1;
 	}
+
+	public String getUrl2() {
+		return url2;
+	}
+
+	public void setUrl2(String url2) {
+		this.url2 = url2;
+	}
+
+
 
 	private Connection connection = null;
  
@@ -66,7 +81,7 @@ public class ConnectionFactory {
 	public void init(){
 		try {
 			    System.out.println("init connectionn");
-			    ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+			    ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url1);
 	            connectionFactory.setUserName(user);
 	        	connectionFactory.setPassword(pw);
 	            // Create a Connection
@@ -106,7 +121,7 @@ public class ConnectionFactory {
 				try {
 					close(connection);
 					Thread.sleep(3000);
-				    ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+				    ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url1);
 		            connectionFactory.setUserName(user);
 		        	connectionFactory.setPassword(pw);
 					this.connection = connectionFactory.createConnection();

@@ -17,12 +17,7 @@ import org.springframework.stereotype.Component;
 public class MessageReceived {
 	
 	
-	@Value("${activeMqUser}")
-	private String user;
-	@Value("${activeMqPw}")
-	private String pw;
-	@Value("${activeMqUrl}")
-	private String url;
+	 
 	
 	@Autowired
 	private ConnectionFactory connectionFactory;
