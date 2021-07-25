@@ -40,6 +40,7 @@ public class SendMsgTest {
 			 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return new ResponseEntity<>("received msg error", HttpStatus.OK);
 		}
 		return new ResponseEntity<>("received: " + rs, HttpStatus.OK);
 	}
