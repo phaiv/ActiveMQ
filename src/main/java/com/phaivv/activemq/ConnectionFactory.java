@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.jms.Connection;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
+//import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -21,9 +22,20 @@ public class ConnectionFactory {
 	private String pw;
 	@Value("${activeMqUrl}")
 	private String url;
+	private Object LOCK_CONNECTION = new Object();
+	private boolean isConnectionOK = true;
+	private long retryTime;
 	
 	
 	
+	public long getRetryTime() {
+		return retryTime;
+	}
+
+	public void setRetryTime(long retryTime) {
+		this.retryTime = retryTime;
+	}
+
 	public String getUser() {
 		return user;
 	}
@@ -49,27 +61,25 @@ public class ConnectionFactory {
 	}
 
 	private Connection connection = null;
-	
+ 
 	@PostConstruct
 	public void init(){
 		try {
-			 System.out.println("init connectionn");
-			 ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+			    System.out.println("init connectionn");
+			    ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
 	            connectionFactory.setUserName(user);
 	        	connectionFactory.setPassword(pw);
 	            // Create a Connection
 	            connection = connectionFactory.createConnection();
 	            connection.start();
-	            
 	            connection.setExceptionListener(new ExceptionListener() {
-					public void onException(JMSException paramJMSException) {	
+					public void onException(JMSException jmsEx) {	
 						//todo reconnect
-						 
+						System.out.println("reconnect connection cause by: " +jmsEx.toString());
+						startListener();
 					}
 				});
-	            System.out.println("connection: " + connection);
 		} catch (Exception e) {
-			//lmr.error("Cannot int JMS activeMQ ", LOCATION);
 			 throw new RuntimeException(e.toString());
 		}
 		
@@ -77,16 +87,67 @@ public class ConnectionFactory {
 	
 	public Session createSession() {
 		Session session = null;
-		 System.out.println("createSession: " + connection);
 		if (connection != null) {
 			try {
-				session = connection.createSession(false,
-						Session.AUTO_ACKNOWLEDGE);
+				session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			} catch (JMSException e) {
 				 e.printStackTrace();
+				 startListener();
 			}
 		}
 		return session;
+	}
+	
+	public void retryConnection() {
+		System.out.println("Do retryConnection........");
+		isConnectionOK = false;
+		while (true) {
+			if (isConnectionOK == false) {
+				try {
+					close(connection);
+					Thread.sleep(3000);
+				    ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+		            connectionFactory.setUserName(user);
+		        	connectionFactory.setPassword(pw);
+					this.connection = connectionFactory.createConnection();
+					this.connection.start();
+					isConnectionOK = true;// alert ok
+					System.out.println("##################### RETRY CONNECTION-DONE ################################");
+					break;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			} else
+				break;
+		}
+	}
+	
+	private void startListener() {
+		System.out.println("startListener: " + isConnectionOK);
+		if (isConnectionOK) {
+			if (System.currentTimeMillis() - retryTime <= 3 * 60 * 1000)
+				return;
+			synchronized (LOCK_CONNECTION) {
+				if (isConnectionOK) {
+					try {
+						JmsConnListener listener = new JmsConnListener(this);
+						Thread thread = new Thread(listener);
+						thread.start();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}
+	}
+	
+	private void close(Connection connection){
+		try {
+			if(connection!=null)connection.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 }

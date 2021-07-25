@@ -32,7 +32,7 @@ public class SendMsgTest {
 	@Autowired
 	private MessageReceived msess;
 	@PostMapping("/received")
-	public ResponseEntity<String> receivedMsg() {
+	public ResponseEntity<String> receivedMsg(@RequestBody String request) {
 		 String rs = "";
 		try {
 			 
