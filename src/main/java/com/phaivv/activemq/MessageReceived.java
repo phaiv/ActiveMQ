@@ -62,7 +62,7 @@ public class MessageReceived {
 				System.out.println("result: " + result);
 			} else {
 //				istimeout = true;
-				 result="no record";
+				 result="No record";
 			}
 			
 
