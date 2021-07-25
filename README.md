@@ -1,6 +1,8 @@
 # ActiveMQ
 Using activeMQ on AWS and ActiveMQ has been install on Centos 7 via Virtualbox
-
+#config for centos allow traffice port
+sudo firewall-cmd --zone=public --permanent --add-port=8161/tcp
+sudo firewall-cmd --reload
 #activemqConfigtion
 
 <!--
