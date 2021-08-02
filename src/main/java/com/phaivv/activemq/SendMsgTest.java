@@ -19,7 +19,7 @@ public class SendMsgTest {
 	public ResponseEntity<String> sendMessagex(@RequestBody String request) {
 		  
 		try {
-			 
+			  System.out.println("init connectionn ");
 			//sendMessage.sendMessage(request);
 			 
 		} catch (Exception e) {
