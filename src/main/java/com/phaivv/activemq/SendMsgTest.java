@@ -20,7 +20,7 @@ public class SendMsgTest {
 		  
 		try {
 			 
-			sendMessage.sendMessage(request);
+			//sendMessage.sendMessage(request);
 			 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -36,7 +36,7 @@ public class SendMsgTest {
 		 String rs = "";
 		try {
 			 
-			rs = msess.received();	 
+			//rs = msess.received();	 
 			 
 		} catch (Exception e) {
 			e.printStackTrace();

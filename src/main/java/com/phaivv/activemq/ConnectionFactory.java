@@ -77,10 +77,10 @@ public class ConnectionFactory {
 
 	private Connection connection = null;
  
-//	@PostConstruct --> conmment to test
+//	@PostConstruct --> conmment to test 
 	public void init(){
 		try {
-			    System.out.println("init connectionn");
+			    System.out.println("init connectionn ");
 			    ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url1);
 	            connectionFactory.setUserName(user);
 	        	connectionFactory.setPassword(pw);
