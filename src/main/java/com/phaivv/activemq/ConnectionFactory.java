@@ -77,7 +77,7 @@ public class ConnectionFactory {
 
 	private Connection connection = null;
  
-	@PostConstruct
+//	@PostConstruct --> conmment to test
 	public void init(){
 		try {
 			    System.out.println("init connectionn");
